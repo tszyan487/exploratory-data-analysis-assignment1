@@ -1,0 +1,40 @@
+rm(list = ls())
+
+library(readxl)
+library(dplyr)
+library(xlsx)
+library(tidyr)
+library(reshape2)
+library(lubridate)
+
+wd <- "C:/Users/ili/Documents/Development/Coursera/Exploratory Data Analysis/Week 1/Assignment1"
+setwd(wd)
+
+data_files <- read.table("household_power_consumption.txt", sep = ";", header = T, stringsAsFactors = F )
+
+data_files2 <- subset(data_files, Date == '1/2/2007' | Date == '2/2/2007')
+data_files2$Date <- as.character(data_files2$Date)
+data_files2$Time <- as.character(data_files2$Time)
+
+data_files1 <- data_files2
+
+# data_files$Global_active_power <- as.integer(data_files$Global_active_power)/1000
+
+data_files2$Global_active_power <- as.numeric(data_files2$Global_active_power)
+data_files2$Global_reactive_power <- as.numeric(data_files2$Global_reactive_power)
+data_files2$Voltage <- as.numeric(data_files2$Voltage)
+data_files2$Global_intensity <- as.numeric(data_files2$Global_intensity)
+data_files2$Sub_metering_1 <- as.numeric(data_files2$Sub_metering_1)
+data_files2$Sub_metering_2 <- as.numeric(data_files2$Sub_metering_2)
+
+# Plot 2
+Date <- as.Date(data_files2$Date, format = '%d/%m/%Y')
+Time <- data_files2$Time
+abc <- paste(Date,Time)
+
+Date_Time <- strptime(abc, format = '%Y-%m-%d %H:%M:%S')
+data_files2 <- cbind(Date_Time,data_files2)
+
+png(file = "Plot2.png", width=480, height = 480)
+plot(data_files2$Global_active_power~data_files2$Date_Time, type = "l", col="black", xlab= "Weekdays", ylab="Global Active Power (Kilowatts)")
+dev.off()
